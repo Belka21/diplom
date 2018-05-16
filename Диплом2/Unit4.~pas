@@ -1,0 +1,32 @@
+unit Unit4;
+
+interface
+uses
+  Windows, Messages, SysUtils, Variants, Classes;
+
+  function take(s,subs:string):string;
+
+implementation
+
+function take(s,subs:string):string;
+var
+p,b:integer;
+s1:string;
+begin
+  if (s<>'body') and (s<>'items') then
+  begin
+    p:=pos(subs,s);
+    if p<>0 then
+    begin
+    delete(s,1,p-1);
+    p:=pos(':',s);
+    delete(s,1,p);
+    p:=pos(',',s);
+    delete(s,p,Length(s)-p);
+    Result:=s;
+    end;
+  end;
+end;
+
+end.
+ 
