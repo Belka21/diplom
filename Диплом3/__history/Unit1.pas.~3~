@@ -1,0 +1,81 @@
+unit Unit1;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, StdCtrls, Grids, DBGrids, ADODB, DB, DBTables;
+
+type
+  TForm1 = class(TForm)
+    ComboBox1: TComboBox;
+    ADOConnection1: TADOConnection;
+    ADOQuery1: TADOQuery;
+    ADOQuery2: TADOQuery;
+    ADOTable1: TADOTable;
+    DBGrid1: TDBGrid;
+    ADODataSet1: TADODataSet;
+    DataSource1: TDataSource;
+    procedure FormCreate(Sender: TObject);
+    procedure ComboBox1Change(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  Form1: TForm1;
+
+implementation
+
+{$R *.dfm}
+
+procedure TForm1.ComboBox1Change(Sender: TObject);
+begin
+  if ADOConnection1.Connected=true then
+  begin
+    try
+      ADOQuery1.Active:=False;
+     ADOQuery1.Close;
+     ADOQuery1.SQL.Clear;
+     ADOQuery1.SQL.Add('SELECT КодСп FROM Специальность WHERE НазвСпРосс = :s');
+     ADOQuery1.Parameters.ParamByName('s').Value:=ComboBox1.Text;
+     ADOQuery1.Active:=true;
+     //DBGrid1. := ADOQuery1.Fields[0].AsString;
+    except
+     ShowMessage('SQL 2 Error');
+    end;
+  end;
+end;
+
+procedure TForm1.FormCreate(Sender: TObject);
+var i:integer;
+begin
+i:=0;
+  try
+    ADOConnection1.Connected:=true;
+  except
+    ShowMessage('Error conection');
+  end;
+  if ADOConnection1.Connected=true then
+  begin
+    try
+      ADOQuery1.Active:=False;
+     ADOQuery1.Close;
+     ADOQuery1.SQL.Clear;
+     ADOQuery1.SQL.Add('SELECT НазвСпРосс FROM Специальность');
+     ADOQuery1.Active:=true;
+     ComboBox1.Items.Clear;
+     for i := 0 to ADOQuery1.RecordCount - 1 do
+     begin
+      ComboBox1.Items.Add(ADOQuery1.Fields[0].AsString);
+      ADOQuery1.Next;
+     end;
+    except
+      ShowMessage('SQL Error');
+    end;
+  end;
+end;
+
+end.
